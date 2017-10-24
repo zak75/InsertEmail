@@ -7,18 +7,22 @@ class App extends React.Component {
     constructor(props) {
     super(props);
     this.state = {email: ''};
-
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event) {
-    this.setState({value: event.target.email});
-  }
-
   handleSubmit(event) {
-    alert('Votre email: ' + this.state.email + " a bien été prise en compte. Vous êtes bien inscrit à notre Newsletter, merci !");
     event.preventDefault();
+    fetch('http://localhost:8090/insertEmail', {
+      mode: 'no-cors',
+      method: 'post',
+      body: {
+        'email': this.email.value
+      }
+    })
+    .then((resp) => resp.text())
+    .then((text)=>  alert(text))
+    .catch((err) => alert(err))
   }
   
   getInitialState() {
@@ -32,13 +36,13 @@ class App extends React.Component {
     return (
       <div>
         <img className="logo" img src={logo} alt="My logo" />
-        <form action="/index.html" onSubmit={this.handleSubmit} method="post" name="sign up for beta form">
+        <form onSubmit={this.handleSubmit} name="sign up for beta form">
           <div className="header">
             <p>Bientôt de retour, en beta finale.</p>
           </div>
           
           <div className="input">
-            <input type="email" className="button" id="email" value={this.state.value} onChange={this.handleChange} name="email" placeholder="Votre email (c'est une newsletter)" />
+            <input ref={(ref) => {this.email = ref}} type="email" className="button" id="email" value={this.state.value} onChange={this.handleChange} name="email" placeholder="Votre email (c'est une newsletter)" />
             <input type="submit" className="button" id="submit" disabled={!this.state.email} defaultValue="Envoyer" />
           </div>
         </form>
