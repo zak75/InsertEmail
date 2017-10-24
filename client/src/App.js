@@ -12,14 +12,17 @@ class App extends React.Component {
   }
 
   handleSubmit(event) {
-    alert('Votre email: ' + this.state.email + " a bien été prise en compte. Vous êtes bien inscrit à notre Newsletter, merci !");
     event.preventDefault();
     fetch('http://localhost:8090/insertEmail', {
+      mode: 'no-cors',
       method: 'post',
       body: {
         'email': this.email.value
       }
-    });
+    })
+    .then((resp) => resp.text())
+    .then((text)=>  alert(text))
+    .catch((err) => alert(err))
   }
   
   getInitialState() {

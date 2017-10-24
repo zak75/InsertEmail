@@ -13,12 +13,16 @@ func doDBStuffHere() error {
 	return errors.New("database layer not implemented")
 }
 
+func test(res http.ResponseWriter, req *http.Request) {
+	res.Write([]byte("bonjour!"))
+}
+
 func insertEmail(res http.ResponseWriter, req *http.Request) {
 	db, err := sql.Open("mysql", "root:<PASSWORD>@/<DBNAME>")
 	if err != nil {
 		log.Printf("database connection error: %v", err)
-		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte("something went wrong"))
+		res.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	defer db.Close()
@@ -26,8 +30,8 @@ func insertEmail(res http.ResponseWriter, req *http.Request) {
 	err = db.Ping()
 	if err != nil {
 		log.Printf("database connection error: %v", err)
-		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte("something went wrong"))
+		res.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -48,6 +52,7 @@ func insertEmail(res http.ResponseWriter, req *http.Request) {
 
 func main() {
 	http.HandleFunc("/", insertEmail)
+	http.HandleFunc("/test", test)
 	log.Println("server running....")
 	log.Fatal(http.ListenAndServe(":8090", nil))
 }
