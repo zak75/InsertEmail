@@ -17,7 +17,7 @@ class App extends React.Component {
   }
 
   handleSubmit(event) {
-    alert('Votre email: ' + this.state.email + " a bien été prise en compte. Vous êtes bien inscrit à notre Newsletter, merci !");
+    alert('Your email: ' + this.state.email + " is now registered to our newsletter. Thank you !");
     event.preventDefault();
   }
   
@@ -34,7 +34,7 @@ class App extends React.Component {
         <img className="logo" img src={logo} alt="My logo" />
         <form action="/index.html" onSubmit={this.handleSubmit} method="post" name="sign up for beta form">
           <div className="header">
-            <p>Bientôt de retour, en beta finale.</p>
+            <p>Coming soon.</p>
           </div>
           
           <div className="input">
