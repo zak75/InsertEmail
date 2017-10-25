@@ -39,7 +39,7 @@ class App extends React.Component {
           
           <div className="input">
             <input type="email" className="button" id="email" value={this.state.value} onChange={this.handleChange} name="email" placeholder="Votre email (c'est une newsletter)" />
-            <input type="submit" className="button" id="submit" disabled={!this.state.email} defaultValue="Envoyer" />
+            <input type="submit" className="button" id="submit" disabled={!this.state.email} defaultValue="Submit" />
           </div>
         </form>
       </div>
