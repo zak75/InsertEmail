@@ -1,81 +1,37 @@
 package main
 
 import (
-	"database/sql"
-	"errors"
 	"log"
 	"net/http"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/zak75/InsertEmail/server/db"
 )
 
-func doDBStuffHere() error {
-	return errors.New("database layer not implemented")
-}
-
-func test(res http.ResponseWriter, req *http.Request) {
-	res.Write([]byte("bonjour!"))
-}
-
 func insertEmail(res http.ResponseWriter, req *http.Request) {
-	req.ParseForm()
-
-	email := req.Form["email"]
-	var mail string
-
-	log.Println("email:", email)
-
-	db, err := sql.Open("mysql", "root:<PASSWORD>@/<DBNAME>")
-
-	err = db.QueryRow("SELECT email FROM newsletter WHERE email=?", email).Scan(&mail)
-
-	switch {
-	case err == sql.ErrNoRows:
-
-		_, err = db.Exec("INSERT INTO newsletter(email) VALUES(?)", email)
-		if err != nil {
-			res.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-	default:
-
-	}
-
-	if err != nil {
-		log.Printf("database connection error: %v", err)
-		res.Write([]byte("something went wrong"))
-		res.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		log.Printf("database connection error: %v", err)
-		res.Write([]byte("something went wrong"))
-		res.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
 	if req.Method != "POST" {
 		res.WriteHeader(http.StatusMethodNotAllowed)
 		res.Write([]byte("something went wrong"))
 		return
 	}
 
-	err = doDBStuffHere()
+	req.ParseForm()
+
+	email := req.Form["email"]
+	log.Println("email:", email)
+
+	err := db.InsertEmail(email[0])
+
 	if err != nil {
-		log.Printf("Server error, unable to create account: %v", err)
-		res.WriteHeader(http.StatusBadRequest)
-		res.Write([]byte("something went wrong"))
+		res.Write([]byte(err.Error()))
+		res.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	res.Write([]byte("Thanks, your email has been added to the newsletter"))
 }
 
 func main() {
 	http.HandleFunc("/", insertEmail)
-	http.HandleFunc("/test", test)
 	log.Println("server running....")
 	log.Fatal(http.ListenAndServe(":8090", nil))
 }
