@@ -23,7 +23,7 @@ class App extends React.Component {
       formBody.push(encodedKey + '=' + encodedValue);
     }
     formBody = formBody.join('&');
-    fetch('https://flare.gg/insertEmail', {
+    fetch('https://domainname.com/insertEmail', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
