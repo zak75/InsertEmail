@@ -13,12 +13,23 @@ class App extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    let body = {
+      'email': this.email.value
+    }
+    let formBody = [];
+    for (let param in body) {
+      let encodedKey = encodeURIComponent(param);
+      let encodedValue = encodeURIComponent(body[param]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
     fetch('http://localhost:8090/insertEmail', {
-      mode: 'no-cors',
-      method: 'post',
-      body: {
-        'email': this.email.value
-      }
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formBody
     })
     .then((resp) => resp.text())
     .then((text)=>  alert(text))
