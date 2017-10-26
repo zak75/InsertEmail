@@ -19,6 +19,27 @@ func test(res http.ResponseWriter, req *http.Request) {
 
 func insertEmail(res http.ResponseWriter, req *http.Request) {
 	db, err := sql.Open("mysql", "root:<PASSWORD>@/<DBNAME>")
+
+	email := req.FormValue("email")
+
+	var mail string
+
+	err = db.QueryRow("SELECT email FROM newsletter WHERE email=?", email).Scan(&mail)
+
+    switch {
+    	case err == sql.ErrNoRows:
+
+        _, err = db.Exec("INSERT INTO newsletter(email) VALUES(?)", email)
+        if err != nil {
+            res.WriteHeader(http.StatusInternalServerError)    
+            return
+        }
+
+         default:
+	    	http.Redirect(res, req, "/", 301)
+
+    }
+
 	if err != nil {
 		log.Printf("database connection error: %v", err)
 		res.Write([]byte("something went wrong"))
@@ -41,6 +62,8 @@ func insertEmail(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+
+
 	err = doDBStuffHere()
 	if err != nil {
 		log.Printf("Server error, unable to create account: %v", err)
@@ -54,5 +77,5 @@ func main() {
 	http.HandleFunc("/", insertEmail)
 	http.HandleFunc("/test", test)
 	log.Println("server running....")
-	log.Fatal(http.ListenAndServe(":8090", nil))
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
