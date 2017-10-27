@@ -23,7 +23,7 @@ class App extends React.Component {
       formBody.push(encodedKey + '=' + encodedValue);
     }
     formBody = formBody.join('&');
-    fetch('https://domainname.com:8090', {
+    fetch('http://domainname.com:8090', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
